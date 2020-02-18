@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"time"
+
 	"google.golang.org/grpc"
 	pb "github.com/angomablaise/grpc-HelloWorld/helloworld"
 )
@@ -14,7 +15,7 @@ const (
 )
 
 func main() {
-	conn,err :=grpc.Dial(address,grpc.WithInsecure,grpc.WithBlock())
+	conn,err := grpc.Dial(address,grpc.WithInsecure(),grpc.WithBlock())
 	if err !=nil {
 		log.Fatalf("did not connect: %v",err)
 	}
@@ -26,11 +27,11 @@ func main() {
 	if  len(os.Args) > 1 {
 		name = os.Args[1]
 	}
-	ctx, cancel := context.WithTimeout(context.Background, time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := C.SayHello(ctx,&pb.HelloRequest{Name:name})
+	r, err := c.SayHello(ctx,&pb.HelloRequest{Name: name})
 	if err != nil {
-		log.Fatalf("Could not greet: %v",err)
+		log.Fatalf("Could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetMessage())
 }

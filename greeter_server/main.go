@@ -9,7 +9,28 @@ import (
 )
 
 const (
-	port = "50051"
+	port = ":50051"
 )
 
-?/server iis used to impement hellowor
+//server iis used to impement helloworld.GreeterServer.
+type server struct {
+	pb.UnimplementedGreeterServer
+}
+
+func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+	log.Printf("Received: %v", in.GetName())
+	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+}
+
+func main() {
+	log.Printf("Inside the server")
+	lis, err := net.Listen("tcp",port)
+	if err !=nil {
+		log.Fatalf("failed to listen : %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterGreeterServer(s,&server{})
+	if err := s.Serve(lis); err !=nil {
+		log.Fatalf("failed to serv: %v",err)
+	}
+}
